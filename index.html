@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualised - UK Livestream Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        @media (max-width: 768px) {
+            nav a {
+                display: none;
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+        }
+
+        /* Dashboard Preview */
+        .dashboard-section {
+            margin: 80px 0;
+        }
+
+        .section-title {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-preview {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .dashboard-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Features */
+        .features {
+            margin: 80px 0;
+            padding: 60px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            padding: 30px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #60a5fa;
+        }
+
+        .feature-card p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        /* Pricing */
+        .pricing {
+            margin: 80px 0;
+            padding: 60px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(96, 165, 250, 0.2);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: #60a5fa;
+            transform: scale(1.05);
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .plan-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+
+        .plan-price {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .plan-price span {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+
+        .plan-description {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 30px;
+            min-height: 40px;
+        }
+
+        .plan-features {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            list-style: none;
+            padding: 10px 0;
+            color: #cbd5e1;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+        }
+
+        .plan-features li:before {
+            content: '✓ ';
+            color: #60a5fa;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .plan-cta {
+            width: 100%;
+            padding: 14px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .plan-cta.primary {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .plan-cta.secondary {
+            background: transparent;
+            border: 2px solid #60a5fa;
+            color: #60a5fa;
+        }
+
+        .plan-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.3);
+        }
+
+        /* CTA Section */
+        .final-cta {
+            background: rgba(96, 165, 250, 0.1);
+            border: 2px solid rgba(96, 165, 250, 0.3);
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        .final-cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-cta p {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 0;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .plan-price {
+                font-size: 36px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: #cbd5e1;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .modal-close:hover {
+            color: #60a5fa;
+        }
+
+        .modal h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            clear: both;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">📊 Data Visualised</div>
+                <nav>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Real-Time Livestream Analytics<br>Built for UK Sellers</h1>
+                <p>See exactly what's driving your sales across TikTok and YouTube. UK data hosting. GDPR compliant. No cloud provider lock-in.</p>
+                <button class="cta-button" onclick="scrollTo('pricing')">Start Free Demo</button>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <div class="container">
+                <h2 class="section-title">See Your Livestream Data in Real-Time</h2>
+                <div class="dashboard-preview">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Dashboard Preview" id="dashboardImg">
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #cbd5e1;">
+                    📸 Your dashboard will display live metrics: revenue, active viewers, sales breakdown, engagement analytics, and AI-powered insights
+                </p>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Data Visualised?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🇬🇧</div>
+                        <h3>UK Data Sovereignty</h3>
+                        <p>All your data stays in the UK. GDPR compliant. No US cloud providers. Your data, your control.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Real-Time Updates</h3>
+                        <p>See your metrics update live as your stream happens. React instantly to what's working.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Mobile-First Design</h3>
+                        <p>Monitor your streams from your phone. Built for streamers on the go.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Deep Analytics</h3>
+                        <p>Understand viewer behavior, peak engagement times, and revenue drivers across platforms.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>AI Insights</h3>
+                        <p>Get actionable recommendations on what to sell, when, and how to maximize revenue.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚙️</div>
+                        <h3>Simple Setup</h3>
+                        <p>Connect your YouTube and TikTok channels in seconds. Start analyzing immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="plan-name">Starter</div>
+                        <div class="plan-price">£39<span>/month</span></div>
+                        <div class="plan-description">Perfect for getting started</div>
+                        <ul class="plan-features">
+                            <li>Up to 1 livestream channel</li>
+                            <li>Basic analytics dashboard</li>
+                            <li>4-hour data refresh</li>
+                            <li>Last 30 days history</li>
+                            <li>Email support</li>
+                        </ul>
+                        <button class="plan-cta secondary" onclick="openCheckout('starter', 'Starter - £39/month')">Get Started</button>
+                    </div>
+
+                    <div class="pricing-card featured">
+                        <div class="plan-name">Professional</div>
+                        <div class="plan-price">£89<span>/month</span></div>
+                        <div class="plan-description">Most popular choice</div>
+                        <ul class="plan-features">
+                            <li>Up to 5 livestream channels</li>
+                            <li>Advanced analytics</li>
+                            <li>Real-time data refresh</li>
+                            <li>1-year history</li>
+                            <li>API access</li>
+                            <li>Priority support</li>
+                        </ul>
+                        <button class="plan-cta primary" onclick="openCheckout('professional', 'Professional - £89/month')">Start Now</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="plan-name">Enterprise</div>
+                        <div class="plan-price">£229<span>/month</span></div>
+                        <div class="plan-description">For serious sellers</div>
+                        <ul class="plan-features">
+                            <li>Unlimited channels</li>
+                            <li>Custom dashboards</li>
+                            <li>Real-time everything</li>
+                            <li>Unlimited history</li>
+                            <li>Advanced API</li>
+                            <li>Dedicated account manager</li>
+                        </ul>
+                        <button class="plan-cta secondary" onclick="openCheckout('enterprise', 'Enterprise - £229/month')">Contact Us</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-cta">
+            <div class="container">
+                <h2>Ready to Take Control of Your Livestream Data?</h2>
+                <p>Join UK livestream sellers who are already using Data Visualised to grow their revenue.</p>
+                <button class="cta-button" onclick="scrollTo('pricing')">Choose Your Plan</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Data Visualised Limited. UK data sovereignty. GDPR compliant.</p>
+        </div>
+    </footer>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCheckout()">&times;</button>
+            <h2 id="checkoutTitle">Get Started</h2>
+            <form onsubmit="handleCheckout(event)">
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="businessName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>YouTube Channel</label>
+                    <input type="text" id="youtubeChannel" placeholder="Your channel name">
+                </div>
+                <div class="form-group">
+                    <label>TikTok Handle</label>
+                    <input type="text" id="tiktokHandle" placeholder="@yourhandle">
+                </div>
+                <button type="submit" class="submit-btn">Proceed to Payment</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px; color: #cbd5e1; font-size: 12px;">
+                We use Stripe for secure payments. Your data is never stored on our servers.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Set dashboard image
+        document.getElementById('dashboardImg').src = 'dashboard-preview.png';
+
+        function scrollTo(elementId) {
+            document.getElementById(elementId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openCheckout(plan, title) {
+            document.getElementById('checkoutTitle').textContent = 'Start ' + title;
+            document.getElementById('checkoutModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function handleCheckout(e) {
+            e.preventDefault();
+            
+            const data = {
+                businessName: document.getElementById('businessName').value,
+                email: document.getElementById('email').value,
+                youtubeChannel: document.getElementById('youtubeChannel').value,
+                tiktokHandle: document.getElementById('tiktokHandle').value,
+                timestamp: new Date().toISOString()
+            };
+
+            // Log for now - replace with actual Stripe integration or backend call
+            console.log('Checkout data:', data);
+            
+            alert('Thank you! We\'ll be in touch shortly with payment details.');
+            closeCheckout();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('checkoutModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCheckout();
+            }
+        });
+    </script>
+</body>
+</html>
